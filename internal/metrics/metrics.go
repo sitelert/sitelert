@@ -100,7 +100,7 @@ func (m *Metrics) InitServices(services []config.Service) {
 		m.CheckTotal.WithLabelValues(s.ID, s.Name, typ, "failure").Add(0)
 
 		// Create histogram series
-		m.CheckLatencySeconds.WithLabelValues(labels...).Observe(0)
+		_, _ = m.CheckLatencySeconds.GetMetricWithLabelValues(labels...)
 	}
 }
 

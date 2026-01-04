@@ -25,26 +25,14 @@ services:
 
 alerting:
   channels:
-    discord_main:
-      type: "discord"
-      webhook_url: "https://discord.invalid/webhook" # stub
     slack_ops:
       type: "slack"
-      webhook_url: "https://slack.invalid/webhook"   # stub
-
+      webhook_url: "${SLACK_WEBHOOK_URL}"
   routes:
-    - match:
-        service_ids: ["homepage"]
-      policy:
-        failure_threshold: 3
-        cooldown: "10m"
-        recovery_alert: true
-      notify: ["discord_main"]
-
     - match:
         service_ids: ["ssh"]
       policy:
-        failure_threshold: 1
+        failure_threshold: 2
         cooldown: "1m"
         recovery_alert: true
       notify: ["slack_ops"]
