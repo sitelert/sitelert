@@ -5,9 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"math/rand"
 	"os"
 	"os/signal"
 	"sitelert/internal/config"
+	"sitelert/internal/scheduler"
 	"sitelert/internal/server"
 	"syscall"
 	"time"
@@ -28,6 +30,9 @@ func Execute() {
 		Use:   "sitelert",
 		Short: "Uptime monitor daemon",
 		RunE: func(cmd *cobra.Command, args []string) error {
+
+			rand.Seed(time.Now().UnixNano())
+
 			logger, err := newLogger(opts.logLevel)
 			if err != nil {
 				return err
@@ -45,14 +50,29 @@ func Execute() {
 
 			srv := server.NewServer(bind, logger)
 
+			sched, err := scheduler.NewScheduler(*cfg, logger)
+			if err != nil {
+				return err
+			}
+
 			ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 			defer stop()
 
 			errCh := make(chan error, 1)
+
 			go func() {
 				logger.Info("starting server", "addr", bind)
 				if err := srv.ListenAndServe(); err != nil && !errors.Is(err, server.ErrServerClosed) {
-					errCh <- err
+					errCh <- fmt.Errorf("server failed: %w", err)
+					return
+				}
+				errCh <- nil
+			}()
+
+			go func() {
+				logger.Info("starting scheduler", "workers", cfg.Global.WorkerCount, "jitter", cfg.Global.Jitter)
+				if err := sched.Start(ctx, cfg.Services); err != nil {
+					errCh <- fmt.Errorf("scheduler failed: %w", err)
 					return
 				}
 				errCh <- nil
@@ -60,10 +80,10 @@ func Execute() {
 
 			select {
 			case <-ctx.Done():
-				logger.Info("shut down requested", "signal", ctx.Err())
+				logger.Info("shutdown requested", "reason", ctx.Err())
 			case err := <-errCh:
 				if err != nil {
-					return fmt.Errorf("server failed: %w", err)
+					return err
 				}
 			}
 
