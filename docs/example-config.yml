@@ -25,14 +25,20 @@ services:
 
 alerting:
   channels:
-    slack_ops:
-      type: "slack"
-      webhook_url: "${SLACK_WEBHOOK_URL}"
+    email_admin:
+      type: "email"
+      smtp_host: "${SMTP_HOST}"
+      smtp_port: 587
+      username: "${SMTP_USER}"
+      password: "${SMTP_PASS}"
+      from: "Sitelert Monitoring <your-email@example.com>"
+      to: ["an@example.com", "another@example.com"]
+
   routes:
     - match:
-        service_ids: ["ssh"]
+        service_ids: ["homepage", "ssh"]
       policy:
-        failure_threshold: 2
-        cooldown: "1m"
+        failure_threshold: 3
+        cooldown: "10m"
         recovery_alert: true
-      notify: ["slack_ops"]
+      notify: ["email_admin"]

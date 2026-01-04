@@ -145,6 +145,9 @@ func (cfg *SitelertConfig) Validate() error {
 			if len(ch.To) == 0 {
 				errs = append(errs, fmt.Sprintf("alerting.channels[%q].to is required for type=email", name))
 			}
+			if (strings.TrimSpace(ch.Username) == "") != (strings.TrimSpace(ch.Password) == "") {
+				errs = append(errs, fmt.Sprintf("alerting.channels.%s: username and password must be set together (or both empty)", name))
+			}
 		default:
 			errs = append(errs, fmt.Sprintf("alerting.channels[%q].type must be one of: discord, slack, email (got %q)", name, ch.Type))
 		}
