@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"os"
 	"os/signal"
+	"sitelert/internal/alerting"
 	"sitelert/internal/config"
 	"sitelert/internal/metrics"
 	"sitelert/internal/scheduler"
@@ -52,9 +53,11 @@ func Execute() {
 			bundle := metrics.NewBundle()
 			bundle.Metrics.InitServices(cfg.Services)
 
+			alertingEngine := alerting.NewEngine(cfg.Alerting, logger)
+
 			srv := server.NewServer(bind, logger, bundle.Registry)
 
-			sched, err := scheduler.NewScheduler(*cfg, logger, bundle.Metrics)
+			sched, err := scheduler.NewScheduler(*cfg, logger, bundle.Metrics, alertingEngine)
 			if err != nil {
 				return err
 			}

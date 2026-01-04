@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"math/rand"
+	"net"
 	"sitelert/internal/checks"
 	"sitelert/internal/config"
 	"sitelert/internal/metrics"
@@ -14,13 +15,20 @@ import (
 	"time"
 )
 
+type ResultHandler interface {
+	HandleResult(svc config.Service, res checks.Result)
+}
+
 type Scheduler struct {
 	log         *slog.Logger
 	workerCount int
 	jitter      time.Duration
 
 	httpChecker *checks.HTTPChecker
-	metrics     *metrics.Metrics
+	tcpChecker  *checks.TCPChecker
+
+	metrics *metrics.Metrics
+	handler ResultHandler
 
 	jobsCh chan job
 	wg     sync.WaitGroup
@@ -56,7 +64,7 @@ func (h scheduleHeap) Peek() *scheduledItem {
 	return h[0]
 }
 
-func NewScheduler(cfg config.SitelertConfig, log *slog.Logger, m *metrics.Metrics) (*Scheduler, error) {
+func NewScheduler(cfg config.SitelertConfig, log *slog.Logger, m *metrics.Metrics, handler ResultHandler) (*Scheduler, error) {
 	if log == nil {
 		log = slog.Default()
 	}
@@ -76,7 +84,9 @@ func NewScheduler(cfg config.SitelertConfig, log *slog.Logger, m *metrics.Metric
 		workerCount: workerCount,
 		jitter:      j,
 		httpChecker: checks.NewHTTPChecker(),
+		tcpChecker:  checks.NewTCPChecker(),
 		metrics:     m,
+		handler:     handler,
 		jobsCh:      make(chan job, workerCount*4),
 	}, nil
 }
@@ -90,7 +100,7 @@ func (s *Scheduler) Start(ctx context.Context, services []config.Service) error 
 	now := time.Now()
 	for _, svc := range services {
 		typ := strings.ToLower(strings.TrimSpace(svc.Type))
-		if typ != "http" {
+		if typ != "http" && typ != "tcp" {
 			s.log.Warn("skipping unsupported service type",
 				"service_id", svc.ID,
 				"service_name", svc.Name,
@@ -203,10 +213,27 @@ func (s *Scheduler) runJob(parent context.Context, workerID int, jb job) {
 	defer cancel()
 
 	start := time.Now()
-	res := s.httpChecker.Check(ctx, svc)
+	var res checks.Result
+
+	switch strings.ToLower(strings.TrimSpace(svc.Type)) {
+	case "http":
+		res = s.httpChecker.Check(ctx, svc)
+	case "tcp":
+		res = s.tcpChecker.Check(ctx, svc)
+	default:
+		res = checks.Result{
+			Success: false,
+			Latency: time.Since(start),
+			Error:   "unsupported type",
+		}
+	}
 
 	if s.metrics != nil {
 		s.metrics.Observe(svc, res)
+	}
+
+	if s.handler != nil {
+		s.handler.HandleResult(svc, res)
 	}
 
 	fields := []any{
@@ -219,6 +246,12 @@ func (s *Scheduler) runJob(parent context.Context, workerID int, jb job) {
 		"status_code", res.StatusCode,
 		"latency_ms", res.Latency.Milliseconds(),
 		"timeout", svc.Timeout,
+	}
+
+	if strings.EqualFold(svc.Type, "http") {
+		fields = append(fields, "target", svc.URL)
+	} else if strings.EqualFold(svc.Type, "tcp") {
+		fields = append(fields, "target", net.JoinHostPort(svc.Host, fmt.Sprintf("%d", svc.Port)))
 	}
 
 	if res.Success {
