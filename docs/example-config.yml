@@ -1,0 +1,21 @@
+global:
+  scrape_bind: "0.0.0.0:8080"
+  log_level: "info"
+  default_timeout: "5s"
+  default_interval: "30s"
+  worker_count: 10
+  jitter: "200ms"
+
+services:
+  - id: "homepage"
+    name: "Company Website"
+    type: "http"
+    url: "https://example.com"
+    interval: "30s"
+    timeout: "5s"
+    expected_status: [200, 301, 302]
+    contains: "Example Domain"
+
+alerting:
+  channels: {}
+  routes: []
