@@ -4,7 +4,7 @@ import (
 	"container/heap"
 	"time"
 
-	"sitelert/internal/config"
+	"uptiq/internal/config"
 )
 
 // scheduledItem represents a service scheduled for checking.

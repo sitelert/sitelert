@@ -7,9 +7,9 @@ import (
 	"io"
 	"net"
 	"net/http"
-	"sitelert/internal/config"
 	"strings"
 	"time"
+	"uptiq/internal/config"
 )
 
 // HTTP checker configuration constants.

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"sitelert/internal/config"
+	"uptiq/internal/config"
 )
 
 // ResolvedRoute contains the computed routing configuration for a service.

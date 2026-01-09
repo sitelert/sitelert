@@ -13,11 +13,11 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"sitelert/internal/alerting"
-	"sitelert/internal/config"
-	"sitelert/internal/metrics"
-	"sitelert/internal/scheduler"
-	"sitelert/internal/server"
+	"uptiq/internal/alerting"
+	"uptiq/internal/config"
+	"uptiq/internal/metrics"
+	"uptiq/internal/scheduler"
+	"uptiq/internal/server"
 )
 
 // Execute runs the CLI.
@@ -25,7 +25,7 @@ func Execute() {
 	opts := DefaultOptions()
 
 	cmd := &cobra.Command{
-		Use:   "sitelert",
+		Use:   "uptiq",
 		Short: "Uptime monitor daemon",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return run(opts)

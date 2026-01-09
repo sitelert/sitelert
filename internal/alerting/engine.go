@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"sitelert/internal/checks"
-	"sitelert/internal/config"
+	"uptiq/internal/checks"
+	"uptiq/internal/config"
 )
 
 // Engine manages alert state and dispatches notifications.

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"sitelert/internal/cli"
+	"uptiq/internal/cli"
 )
 
 func main() {

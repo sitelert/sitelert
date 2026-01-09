@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"net"
-	"sitelert/internal/config"
 	"time"
+	"uptiq/internal/config"
 )
 
 // TCP checker configuration constants.

@@ -2,8 +2,8 @@ package checks
 
 import (
 	"context"
-	"sitelert/internal/config"
 	"time"
+	"uptiq/internal/config"
 )
 
 // Result contains the outcome of a connectivity check.

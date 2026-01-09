@@ -13,9 +13,9 @@ import (
 	"sync"
 	"time"
 
-	"sitelert/internal/checks"
-	"sitelert/internal/config"
-	"sitelert/internal/metrics"
+	"uptiq/internal/checks"
+	"uptiq/internal/config"
+	"uptiq/internal/metrics"
 )
 
 // Default configuration values.

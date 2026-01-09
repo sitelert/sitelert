@@ -8,8 +8,8 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 
-	"sitelert/internal/checks"
-	"sitelert/internal/config"
+	"uptiq/internal/checks"
+	"uptiq/internal/config"
 )
 
 // Labels used in metrics.

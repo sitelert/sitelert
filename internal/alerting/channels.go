@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"sitelert/internal/config"
+	"uptiq/internal/config"
 )
 
 // Sender configuration constants.

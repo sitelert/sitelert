@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"sitelert/internal/checks"
-	"sitelert/internal/config"
+	"uptiq/internal/checks"
+	"uptiq/internal/config"
 )
 
 // AlertPayload contains formatted alert content for all channel types.

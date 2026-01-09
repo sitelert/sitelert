@@ -1,6 +1,6 @@
 package config
 
-// Config is the root configuration structure for sitelert.
+// Config is the root configuration structure for uptiq.
 type Config struct {
 	Global   GlobalConfig   `yaml:"global"`
 	Services []Service      `yaml:"services"`

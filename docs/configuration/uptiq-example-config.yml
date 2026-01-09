@@ -59,10 +59,10 @@ services:
     name: "API Health Check"
     type: "http"
     url: "https://api.example.com/health"
-    method: "GET"                    # GET, POST, PUT, DELETE, HEAD, etc.
+    method: "GET" # GET, POST, PUT, DELETE, HEAD, etc.
     interval: "15s"
     timeout: "3s"
-    expected_status: [200]           # Only accept 200 OK
+    expected_status: [200] # Only accept 200 OK
 
   # API endpoint with body content validation
   - id: "api-ready"
@@ -72,7 +72,7 @@ services:
     interval: "20s"
     timeout: "5s"
     expected_status: [200]
-    contains: "\"status\":\"healthy\""  # Response body must contain this string
+    contains: '"status":"healthy"' # Response body must contain this string
 
   # Authenticated API endpoint
   - id: "api-authenticated"
@@ -86,7 +86,7 @@ services:
     headers:
       Authorization: "Bearer ${API_TOKEN}"
       Accept: "application/json"
-      X-Request-ID: "sitelert-monitor"
+      X-Request-ID: "uptiq-monitor"
 
   # POST endpoint monitoring
   - id: "webhook-endpoint"
@@ -116,7 +116,7 @@ services:
     url: "https://api.stripe.com/v1"
     interval: "1m"
     timeout: "5s"
-    expected_status: [401]           # Expect 401 without auth (proves API is up)
+    expected_status: [401] # Expect 401 without auth (proves API is up)
 
   # Internal microservice
   - id: "user-service"
@@ -199,7 +199,7 @@ services:
   - id: "mongodb"
     name: "MongoDB"
     type: "tcp"
-    host: "${MONGO_HOST}"            # Use environment variable
+    host: "${MONGO_HOST}" # Use environment variable
     port: 27017
     interval: "15s"
     timeout: "3s"
@@ -236,7 +236,7 @@ alerting:
       type: "email"
       smtp_host: "localhost"
       smtp_port: 25
-      from: "Sitelert <alerts@example.com>"
+      from: "Uptiq <alerts@example.com>"
       to:
         - "team@example.com"
 
@@ -247,7 +247,7 @@ alerting:
       smtp_port: 587
       username: "${SMTP_USERNAME}"
       password: "${SMTP_PASSWORD}"
-      from: "Sitelert Monitoring <alerts@example.com>"
+      from: "Uptiq Monitoring <alerts@example.com>"
       to:
         - "ops@example.com"
         - "oncall@example.com"
@@ -279,9 +279,9 @@ alerting:
           - "api-ready"
           - "postgres-primary"
       policy:
-        failure_threshold: 1         # Alert on first failure
-        cooldown: "5m"               # Don't repeat alerts more than every 5 minutes
-        recovery_alert: true         # Send notification when service recovers
+        failure_threshold: 1 # Alert on first failure
+        cooldown: "5m" # Don't repeat alerts more than every 5 minutes
+        recovery_alert: true # Send notification when service recovers
       notify:
         - "slack-oncall"
         - "email-ops"
@@ -295,7 +295,7 @@ alerting:
           - "elasticsearch"
           - "rabbitmq"
       policy:
-        failure_threshold: 3         # Alert after 3 consecutive failures
+        failure_threshold: 3 # Alert after 3 consecutive failures
         cooldown: "10m"
         recovery_alert: true
       notify:
@@ -323,9 +323,9 @@ alerting:
           - "stripe-api"
           - "cdn-assets"
       policy:
-        failure_threshold: 5         # External services can be flaky
+        failure_threshold: 5 # External services can be flaky
         cooldown: "30m"
-        recovery_alert: false        # Don't notify on recovery
+        recovery_alert: false # Don't notify on recovery
       notify:
         - "slack-engineering"
 

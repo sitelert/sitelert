@@ -1,4 +1,4 @@
-module sitelert
+module uptiq
 
 go 1.25.5
 

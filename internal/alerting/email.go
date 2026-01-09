@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"sitelert/internal/config"
+	"uptiq/internal/config"
 )
 
 // Email configuration constants.
