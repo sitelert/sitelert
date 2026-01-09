@@ -26,7 +26,7 @@ const (
 	ResultFailure = "failure"
 )
 
-// Collector contains all sitelert metrics.
+// Collector contains all uptiq metrics.
 type Collector struct {
 	CheckTotal           *prometheus.CounterVec
 	CheckLatencySeconds  *prometheus.HistogramVec
@@ -72,7 +72,7 @@ func newCollector() *Collector {
 	return &Collector{
 		CheckTotal: prometheus.NewCounterVec(
 			prometheus.CounterOpts{
-				Name: "sitelert_check_total",
+				Name: "uptiq_check_total",
 				Help: "Total number of checks executed, labeled by result.",
 			},
 			append(serviceLabels, LabelResult),
@@ -80,7 +80,7 @@ func newCollector() *Collector {
 
 		CheckLatencySeconds: prometheus.NewHistogramVec(
 			prometheus.HistogramOpts{
-				Name:    "sitelert_check_latency_seconds",
+				Name:    "uptiq_check_latency_seconds",
 				Help:    "Check latency in seconds.",
 				Buckets: prometheus.DefBuckets,
 			},
@@ -89,7 +89,7 @@ func newCollector() *Collector {
 
 		Up: prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
-				Name: "sitelert_up",
+				Name: "uptiq_up",
 				Help: "Whether the last check succeeded (1) or failed (0).",
 			},
 			serviceLabels,
@@ -97,7 +97,7 @@ func newCollector() *Collector {
 
 		LastSuccessTimestamp: prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
-				Name: "sitelert_last_success_timestamp",
+				Name: "uptiq_last_success_timestamp",
 				Help: "Unix timestamp of the last successful check.",
 			},
 			serviceLabels,
@@ -105,7 +105,7 @@ func newCollector() *Collector {
 
 		BuildInfo: prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
-				Name: "sitelert_build_info",
+				Name: "uptiq_build_info",
 				Help: "Build/runtime info exposed as a gauge set to 1.",
 			},
 			[]string{"go_version", "os", "arch"},
@@ -113,7 +113,7 @@ func newCollector() *Collector {
 
 		ConfigReloadSuccess: prometheus.NewGauge(
 			prometheus.GaugeOpts{
-				Name: "sitelert_config_reload_success",
+				Name: "uptiq_config_reload_success",
 				Help: "Whether the last config reload succeeded (1) or failed (0).",
 			},
 		),
