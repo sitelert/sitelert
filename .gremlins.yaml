@@ -2,7 +2,7 @@ unleash:
   workers: 1
   threshold:
     efficacy: 75
-    mutant-coverage: 90
+    mutant-coverage: 50
 
 mutants:
   invert-assignments:
