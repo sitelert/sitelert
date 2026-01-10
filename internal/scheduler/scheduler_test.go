@@ -408,7 +408,7 @@ func TestScheduler_TCPChecks(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to start TCP server: %v", err)
 	}
-	defer listener.Close()
+	defer func() { _ = listener.Close() }()
 
 	go func() {
 		for {

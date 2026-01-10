@@ -144,7 +144,7 @@ func TestTCPChecker_DifferentPorts(t *testing.T) {
 				if err != nil {
 					return
 				}
-				conn.Close()
+				_ = conn.Close()
 			}
 		}(listener)
 	}
@@ -259,7 +259,7 @@ func TestTCPChecker_LatencyMeasurement(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to start test server: %v", err)
 	}
-	defer listener.Close()
+	defer func() { _ = listener.Close() }()
 
 	go func() {
 		for {

@@ -258,7 +258,7 @@ func TestFactory_Integration(t *testing.T) {
 				return
 			}
 			if err := conn.Close(); err != nil {
-				t.Fatalf("close conn: %v", err)
+				t.Errorf("close conn: %v", err)
 			}
 		}
 	}()

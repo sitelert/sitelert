@@ -162,7 +162,7 @@ func sendSMTP(ctx context.Context, ch config.Channel, fromAddr string, toAddrs [
 
 	if _, err := writer.Write(msg); err != nil {
 		if cerr := writer.Close(); cerr != nil {
-			return fmt.Errorf("close writer", cerr)
+			return fmt.Errorf("close writer: %w", cerr)
 		}
 		return fmt.Errorf("write data: %w", err)
 	}
